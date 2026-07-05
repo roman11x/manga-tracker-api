@@ -3,7 +3,9 @@ package com.roman.mangaapi.db;
 import com.roman.mangaapi.db.MangaDao;
 import com.roman.mangaapi.model.Manga;
 import com.roman.mangaapi.model.Status;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,11 +23,11 @@ import java.util.Optional;
  * objects and wraps SQLExceptions in DatabaseException so higher layers of
  * the application do not need to deal directly with JDBC errors.
  */
-
+@Repository
 public class MangaRepository implements MangaDao {
 
 
-    private final Connection connection;
+    private final DataSource dataSource;
 
     /**
      * Creates a repository that uses the provided database connection.
@@ -34,8 +36,8 @@ public class MangaRepository implements MangaDao {
      * when to open and close it.
      */
 
-    public MangaRepository(Connection connection) {
-        this.connection = connection;
+    public MangaRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     /**
@@ -84,7 +86,8 @@ public class MangaRepository implements MangaDao {
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
                 """;
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
+        try (   Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
             preparedStatement.setInt(1, manga.getMalid());
             preparedStatement.setString(2, manga.getTitle());
             preparedStatement.setInt(3, manga.getChaptersRead());
@@ -115,7 +118,8 @@ public class MangaRepository implements MangaDao {
                 genres = ?
                 WHERE mal_id = ?
                 """;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+        try (   Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
             preparedStatement.setInt(1, manga.getChaptersRead());
             preparedStatement.setInt(2, manga.getTotalChapters());
             preparedStatement.setString(3, manga.getStatus().name());
@@ -144,7 +148,8 @@ public class MangaRepository implements MangaDao {
                 SET chapters_read = ? 
                 WHERE mal_id = ?
                 """;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+        try (   Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
             preparedStatement.setInt(1, chaptersRead);
             preparedStatement.setInt(2, malId);
 
@@ -165,7 +170,8 @@ public class MangaRepository implements MangaDao {
                 SET status = ? 
                 WHERE mal_id = ?
                 """;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+        try (   Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
             preparedStatement.setString(1, status.name());
             preparedStatement.setInt(2, malId);
 
@@ -186,7 +192,8 @@ public class MangaRepository implements MangaDao {
                 SET total_chapters = ? 
                 WHERE mal_id = ?
                 """;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+        try (   Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
             preparedStatement.setInt(1, totalChapters);
             preparedStatement.setInt(2, malId);
 
@@ -206,7 +213,8 @@ public class MangaRepository implements MangaDao {
                 DELETE FROM manga 
                 WHERE mal_id = ?
                 """;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
+        try (   Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
             preparedStatement.setInt(1, malId);
 
             int rowsDeleted = preparedStatement.executeUpdate();
@@ -223,7 +231,8 @@ public class MangaRepository implements MangaDao {
     public List<Manga> findUnsynced() {
         String selectQuery = "SELECT * FROM manga WHERE metadata_synced = 0";
         var mangaList = new ArrayList<Manga>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
+        try (   Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -245,7 +254,8 @@ public class MangaRepository implements MangaDao {
                 metadata_synced = 1
                 WHERE mal_id = ?
                 """;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+        try (   Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
             preparedStatement.setInt(1, totalVolumes);
             preparedStatement.setString(2, demographic);
             preparedStatement.setString(3, genres);
@@ -264,7 +274,8 @@ public class MangaRepository implements MangaDao {
     public List<Manga> findAll() {
         String selectQuery = "SELECT * FROM manga";
         var mangaList = new ArrayList<Manga>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
+        try (   Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
         ResultSet resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()) {
@@ -283,7 +294,8 @@ public class MangaRepository implements MangaDao {
     public List<Manga> findByStatus(Status status) {
         String selectQuery = "SELECT * FROM manga WHERE status = ?";
         var mangaList = new ArrayList<Manga>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
+        try (   Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
             preparedStatement.setString(1, status.name());
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -305,7 +317,8 @@ public class MangaRepository implements MangaDao {
     @Override
     public Optional<Manga> findByMalId(int malId) {
         String selectQuery = "SELECT * FROM manga WHERE mal_id = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
+        try (   Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
             preparedStatement.setInt(1, malId);
 
             ResultSet resultSet = preparedStatement.executeQuery();
