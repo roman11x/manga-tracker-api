@@ -5,6 +5,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ * Simple controller to check if the application is running.
+ */
 @RestController
 public class PingController {
 
