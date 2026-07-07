@@ -18,10 +18,19 @@ public class PingController {
         this.repo = repo;
     }
 
+    /**
+     * Checks if the application is running by returning a simple message.
+     * @return map with a single key-value pair
+     */
     @GetMapping("/ping")
     public Map<String, String> ping() {
         return Map.of("message", "pong");
     }
+
+    /**
+     * a debug endpoint to check the database size
+     * @return the total amount of manga in the database
+     */
     @GetMapping("/debug/count")
     public Map<String, Integer> count() {
         return Map.of("total", repo.findAll().size());
