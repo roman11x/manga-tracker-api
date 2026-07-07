@@ -10,7 +10,7 @@ import com.roman.mangaapi.model.Status;
  * It can be used to convey manga-related data between different
  * layers of an application.
  */
-public class MangaResponse {
+public class MangaResult {
     private final int malId;
     private final String title;
     private final int chaptersRead;
@@ -20,7 +20,7 @@ public class MangaResponse {
     private final String genres;
     private final String demographic;
 
-    public MangaResponse(int malId, String title, int chaptersRead, int totalChapters, Status status, String addedAt, String genres, String demographic) {
+    public MangaResult(int malId, String title, int chaptersRead, int totalChapters, Status status, String addedAt, String genres, String demographic) {
         this.malId = malId;
         this.title = title;
         this.chaptersRead = chaptersRead;
@@ -36,8 +36,8 @@ public class MangaResponse {
      * @param manga Manga object
      * @return MangaResponse
      */
-    public static MangaResponse from(Manga manga) {
-        return new MangaResponse(manga.getMalid(), manga.getTitle(), manga.getChaptersRead(), manga.getTotalChapters(), manga.getStatus(), manga.getAddedAt(), manga.getGenres(), manga.getDemographic());
+    public static MangaResult from(Manga manga) {
+        return new MangaResult(manga.getMalid(), manga.getTitle(), manga.getChaptersRead(), manga.getTotalChapters(), manga.getStatus(), manga.getAddedAt(), manga.getGenres(), manga.getDemographic());
     }
 
     // getters

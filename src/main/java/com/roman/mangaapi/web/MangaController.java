@@ -3,7 +3,7 @@ package com.roman.mangaapi.web;
 import com.roman.mangaapi.model.Manga;
 import com.roman.mangaapi.model.Status;
 import com.roman.mangaapi.service.MangaService;
-import com.roman.mangaapi.web.dto.MangaResponse;
+import com.roman.mangaapi.web.dto.MangaResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,11 +28,11 @@ public class MangaController {
      * @return a list of MangaResponse objects
      */
     @GetMapping()
-    public List<MangaResponse> getAllManga(@RequestParam(required = false) Status status) {
+    public List<MangaResult> getAllManga(@RequestParam(required = false) Status status) {
         List<Manga> mangaList = status == null ? service.getAllManga() : service.findByStatus(status);
         return mangaList
                 .stream()
-                .map(MangaResponse::from)
+                .map(MangaResult::from)
                 .toList();
     }
 
@@ -42,7 +42,7 @@ public class MangaController {
      * @return a MangaResponse object
      */
     @GetMapping("{id}")
-    public MangaResponse getMangaById(@PathVariable int id) {
-        return MangaResponse.from(service.findByMalId(id).orElseThrow());
+    public MangaResult getMangaById(@PathVariable int id) {
+        return MangaResult.from(service.findByMalId(id).orElseThrow());
     }
 }

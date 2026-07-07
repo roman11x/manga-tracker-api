@@ -3,6 +3,7 @@ package com.roman.mangaapi.service;
 import com.roman.mangaapi.db.MangaRepository;
 import com.roman.mangaapi.model.Manga;
 import com.roman.mangaapi.model.Status;
+import com.roman.mangaapi.web.dto.CreateMangaRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,5 +38,16 @@ public class MangaService {
      */
     public Optional<Manga> findByMalId(int malId) {
         return repo.findByMalId(malId);
+    }
+
+    /**
+     * Creates a new manga record in the database.
+     */
+    public Manga create(String title, int malId, int totalChapters, String genres, String demographic) {
+        var manga = new Manga(malId, title, totalChapters, Status.READING);
+        manga.setGenres(genres);
+        manga.setDemographic(demographic);
+        repo.insert(manga);
+        return manga;
     }
 }
