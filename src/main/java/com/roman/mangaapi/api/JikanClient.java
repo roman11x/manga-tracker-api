@@ -19,6 +19,14 @@ public class JikanClient {
     private final HttpClient client = HttpClient.newHttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
 
+    /**
+     * Searches for manga based on the provided query string and retrieves a list of results
+     * from the Jikan API. The results are limited to nine items to optimize UI display.
+     *
+     * @param query The search query string used to look up manga.
+     * @return A CompletableFuture that resolves to a list of MangaResult objects containing
+     *         the search results, or an empty list if no results are found.
+     */
     public CompletableFuture <List<MangaResult>> searchManga(String query) {
         //build the http request
         // url encode the query
