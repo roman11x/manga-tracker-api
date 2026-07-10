@@ -4,7 +4,7 @@ import com.roman.mangaapi.model.Manga;
 import com.roman.mangaapi.model.Status;
 import com.roman.mangaapi.service.MangaService;
 import com.roman.mangaapi.web.dto.CreateMangaRequest;
-import com.roman.mangaapi.web.dto.MangaResult;
+import com.roman.mangaapi.web.dto.MangaResponse;
 import com.roman.mangaapi.web.dto.UpdateChaptersRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +31,11 @@ public class MangaController {
      * @return a list of MangaResponse objects
      */
     @GetMapping()
-    public List<MangaResult> getAllManga(@RequestParam(required = false) Status status) {
+    public List<MangaResponse> getAllManga(@RequestParam(required = false) Status status) {
         List<Manga> mangaList = status == null ? service.getAllManga() : service.findByStatus(status);
         return mangaList
                 .stream()
-                .map(MangaResult::from)
+                .map(MangaResponse::from)
                 .toList();
     }
 
@@ -45,8 +45,8 @@ public class MangaController {
      * @return a MangaResponse object
      */
     @GetMapping("{id}")
-    public MangaResult getMangaById(@PathVariable int id) {
-        return MangaResult.from(service.findByMalId(id).orElseThrow());
+    public MangaResponse getMangaById(@PathVariable int id) {
+        return MangaResponse.from(service.findByMalId(id));
     }
 
     /**
@@ -56,9 +56,9 @@ public class MangaController {
      */
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public MangaResult create(@RequestBody CreateMangaRequest request) {
+    public MangaResponse create(@RequestBody CreateMangaRequest request) {
         Manga created = service.create(request.getTitle(),request.getMalId(),request.getTotalChapters(),request.getDemographic(),request.getGenres());
-        return MangaResult.from(created);
+        return MangaResponse.from(created);
     }
 
     /**
@@ -68,8 +68,8 @@ public class MangaController {
      * @return a MangaResponse object representing the updated manga
      */
     @PatchMapping("{malId}/chapters")
-    public MangaResult updateChapters(@PathVariable int malId, @RequestBody UpdateChaptersRequest request) {
-        return MangaResult.from(service.updateChapters(malId, request.chaptersRead));
+    public MangaResponse updateChapters(@PathVariable int malId, @RequestBody UpdateChaptersRequest request) {
+        return MangaResponse.from(service.updateChapters(malId, request.chaptersRead));
     }
 
     /**
@@ -79,8 +79,8 @@ public class MangaController {
      * @return a MangaResponse object representing the updated manga
      */
     @PatchMapping("{malId}/status")
-    public MangaResult updateStatus(@PathVariable int malId, @RequestParam Status status) {
-        return MangaResult.from(service.updateStatus(malId, status));
+    public MangaResponse updateStatus(@PathVariable int malId, @RequestParam Status status) {
+        return MangaResponse.from(service.updateStatus(malId, status));
     }
 
     /**

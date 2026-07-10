@@ -1,6 +1,7 @@
 package com.roman.mangaapi.service;
 
 import com.roman.mangaapi.db.MangaRepository;
+import com.roman.mangaapi.exception.MangaNotFoundException;
 import com.roman.mangaapi.model.Manga;
 import com.roman.mangaapi.model.Status;
 import com.roman.mangaapi.web.dto.CreateMangaRequest;
@@ -36,8 +37,8 @@ public class MangaService {
     /*
     * Finds a manga by its MyAnimeList ID.
      */
-    public Optional<Manga> findByMalId(int malId) {
-        return repo.findByMalId(malId);
+    public Manga findByMalId(int malId) {
+        return repo.findByMalId(malId).orElseThrow(() -> new MangaNotFoundException(malId));
     }
 
     /**
@@ -59,7 +60,7 @@ public class MangaService {
      */
     public Manga updateChapters(int malId, int chapters) {
         repo.updateChaptersRead(malId, chapters);
-        return findByMalId(malId).orElseThrow();
+        return findByMalId(malId);
     }
 
     /**
@@ -70,7 +71,7 @@ public class MangaService {
      */
     public Manga updateStatus(int malId, Status status) {
         repo.updateStatus(malId, status);
-        return findByMalId(malId).orElseThrow();
+        return findByMalId(malId);
     }
 
     /**
@@ -78,6 +79,7 @@ public class MangaService {
      * @param malId the MyAnimeList ID of the manga to delete
      */
     public void delete(int malId) {
+        findByMalId(malId);
         repo.delete(malId);
     }
 
