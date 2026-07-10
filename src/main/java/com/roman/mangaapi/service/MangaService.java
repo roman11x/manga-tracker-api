@@ -44,10 +44,41 @@ public class MangaService {
      * Creates a new manga record in the database.
      */
     public Manga create(String title, int malId, int totalChapters, String genres, String demographic) {
-        var manga = new Manga(malId, title, totalChapters, Status.READING);
+        var manga = new Manga(malId, title, totalChapters, Status.PLAN_TO_READ);
         manga.setGenres(genres);
         manga.setDemographic(demographic);
         repo.insert(manga);
         return manga;
     }
+
+    /**
+     * Updates the chapters read for a manga in the database.
+     * @param malId the MyAnimeList ID of the manga
+     * @param chapters the number of chapters read
+     * @return the updated Manga object
+     */
+    public Manga updateChapters(int malId, int chapters) {
+        repo.updateChaptersRead(malId, chapters);
+        return findByMalId(malId).orElseThrow();
+    }
+
+    /**
+     * Updates the total chapter count for a manga in the database.
+     * @param malId the MyAnimeList ID of the manga
+     * @param status the new status of the manga
+     * @return the updated Manga object
+     */
+    public Manga updateStatus(int malId, Status status) {
+        repo.updateStatus(malId, status);
+        return findByMalId(malId).orElseThrow();
+    }
+
+    /**
+     * Deletes a manga record from the database.
+     * @param malId the MyAnimeList ID of the manga to delete
+     */
+    public void delete(int malId) {
+        repo.delete(malId);
+    }
+
 }

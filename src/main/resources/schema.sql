@@ -5,7 +5,11 @@ CREATE TABLE IF NOT EXISTS manga (
     total_chapters INTEGER NOT NULL DEFAULT 0 CHECK (total_chapters >= 0),
     status TEXT NOT NULL DEFAULT 'PLAN_TO_READ',
     cover_path TEXT,
-    added_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    added_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    total_volumes INTEGER NOT NULL DEFAULT 0,
+    demographic TEXT,
+    genres TEXT,
+    metadata_synced INTEGER NOT NULL DEFAULT 0
     );
 
 CREATE INDEX IF NOT EXISTS idx_manga_status ON manga(status);
