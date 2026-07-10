@@ -65,6 +65,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>manga-tracker-api</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
